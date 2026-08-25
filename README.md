@@ -63,7 +63,8 @@ The current implementation includes:
 * Inventory management
 * Parish activities
 * Database migrations
-* Development and production Docker configurations
+* Development infrastructure
+* Production infrastructure
 
 The project should be considered an **initial version rather than a finished product**.
 
@@ -112,12 +113,12 @@ The web and mobile applications consume the same centralized API, providing a co
 | Layer                   | Technology     |
 | ----------------------- | -------------- |
 | API                     | FastAPI        |
-| Language                | Python 3.11+   |
-| ORM                     | SQLAlchemy 2.0 |
+| Language                | Python         |
+| ORM                     | SQLAlchemy     |
 | Migrations              | Alembic        |
-| Validation              | Pydantic v2    |
-| Database                | PostgreSQL 16  |
-| Web                     | Next.js 15     |
+| Validation              | Pydantic       |
+| Database                | PostgreSQL     |
+| Web                     | Next.js        |
 | Web Language            | TypeScript     |
 | Web UI                  | Tailwind CSS   |
 | Mobile                  | Flutter        |
@@ -130,40 +131,22 @@ The web and mobile applications consume the same centralized API, providing a co
 
 ---
 
-## 👥 Groups
-
-The first version defines five predefined groups.
-
-Groups are currently fixed and cannot be created or deleted through the application.
-
-| Group                 | Category    | Age Range |
-| --------------------- | ----------- | --------: |
-| Trigo Verde           | Childhood   |       4–6 |
-| Trigo Maduro          | Childhood   |       7–9 |
-| Trigo Maduro Avanzado | Childhood   |     10–12 |
-| Adolescencia          | Adolescence |     13–15 |
-| Juventud              | Youth       |     16–24 |
-
-The system also supports automatic group reassignment based on member age.
-
----
-
 ## 🧩 Main Domains
 
-The backend is organized around business domains.
+The system is organized around several business domains:
 
 | Domain       | Description                                       |
 | ------------ | ------------------------------------------------- |
 | `usuarios`   | Authentication, users, roles and account security |
-| `grupos`     | Management of the predefined missionary groups    |
+| `grupos`     | Management of missionary groups                   |
 | `miembros`   | Children, adolescents and young members           |
-| `asesores`   | Advisors and their roles and monthly quotas       |
-| `encuentros` | Weekly meetings, attendance and metrics           |
-| `tesoreria`  | Fundraising activities, donations and income      |
-| `gastos`     | Expense categories and expense records            |
-| `tienda`     | Product sales and sale details                    |
-| `inventario` | Inventory items, status and origin                |
-| `parroquial` | Parish activities and related deliveries          |
+| `asesores`   | Advisors and their roles                          |
+| `encuentros` | Weekly meetings and attendance                    |
+| `tesoreria`  | Fundraising activities and income                 |
+| `gastos`     | Expense categories and records                    |
+| `tienda`     | Product sales                                     |
+| `inventario` | Inventory management                              |
+| `parroquial` | Parish activities                                 |
 
 ---
 
@@ -179,9 +162,7 @@ The system includes:
 * Account lockout
 * Protected API endpoints
 
-Security-related configuration should be handled through environment variables.
-
-Sensitive credentials must never be committed to the repository.
+Sensitive credentials and security configuration should be handled through environment variables.
 
 ---
 
@@ -192,17 +173,7 @@ iajm/
 ├── backend/
 │   ├── app/
 │   │   ├── core/
-│   │   │   ├── config/
-│   │   │   ├── database/
-│   │   │   ├── security/
-│   │   │   └── dependencies/
 │   │   ├── domains/
-│   │   │   ├── usuarios/
-│   │   │   ├── grupos/
-│   │   │   ├── miembros/
-│   │   │   ├── asesores/
-│   │   │   ├── encuentros/
-│   │   │   └── ...
 │   │   ├── cron/
 │   │   └── main.py
 │   ├── alembic/
@@ -217,13 +188,10 @@ iajm/
 │
 ├── mobile/
 │   └── lib/
-│       ├── core/
-│       └── features/
 │
 ├── docker/
 │   ├── backend.Dockerfile
 │   └── nginx/
-│       └── nginx.conf
 │
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
@@ -236,7 +204,7 @@ iajm/
 
 ## 🐳 Infrastructure
 
-The project includes Docker configurations for both development and production environments.
+The project includes Docker configurations for development and production environments.
 
 ### Development
 
@@ -256,7 +224,7 @@ The infrastructure includes:
 * FastAPI backend
 * Nginx
 * Web application
-* Supporting services required by the project
+* Supporting services
 
 ---
 
@@ -265,10 +233,10 @@ The infrastructure includes:
 ### Requirements
 
 * Docker Desktop
-* Python 3.11+
+* Python
 * Poetry
-* Node.js 20+
-* Flutter 3.41+
+* Node.js
+* Flutter
 
 ### Backend
 
@@ -284,12 +252,6 @@ poetry run python scripts/seed.py
 poetry run uvicorn app.main:app --reload --port 8000
 ```
 
-API documentation:
-
-```text
-http://localhost:8000/api/docs
-```
-
 ### Web Application
 
 ```bash
@@ -300,12 +262,6 @@ npm install
 npm run dev
 ```
 
-Web application:
-
-```text
-http://localhost:3000
-```
-
 ### Mobile Application
 
 ```bash
@@ -314,12 +270,6 @@ cd mobile
 flutter pub get
 
 flutter run
-```
-
-Configure the backend URL in:
-
-```text
-mobile/lib/core/network/api_client.dart
 ```
 
 ---
@@ -340,17 +290,15 @@ Testing will continue to expand as the project evolves.
 
 ## 🗃️ Database
 
-The project uses **PostgreSQL 16** as its primary relational database.
+The project uses PostgreSQL as its primary relational database.
 
-Database schema changes are managed using **Alembic migrations**.
-
-To apply migrations:
+Database schema changes are managed using Alembic migrations.
 
 ```bash
 poetry run alembic upgrade head
 ```
 
-The project also provides a seed script for initializing development data:
+Development data can be initialized using the seed script:
 
 ```bash
 poetry run python scripts/seed.py
@@ -360,23 +308,13 @@ poetry run python scripts/seed.py
 
 ## ☁️ Deployment
 
-The initial deployment configuration is designed for **DigitalOcean** using Docker.
+The initial deployment configuration is designed for DigitalOcean using Docker.
 
-A production environment can be deployed using:
+The production environment can be started with:
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d --build
 ```
-
-The production configuration supports:
-
-* Docker-based deployment
-* PostgreSQL
-* Nginx
-* Domain configuration
-* HTTPS / Let's Encrypt
-* Database migrations
-* Database backups
 
 ---
 
@@ -385,8 +323,6 @@ The production configuration supports:
 IAJM is being developed incrementally.
 
 The first version establishes the foundation of the platform rather than attempting to solve every possible requirement from the beginning.
-
-The development approach is:
 
 ```text
 Real Requirements
@@ -404,24 +340,24 @@ Improvements
 Future Versions
 ```
 
-This allows the system to evolve based on actual operational needs rather than trying to define the entire platform upfront.
+The system will evolve based on actual operational requirements and feedback.
 
 ---
 
 ## 🛣️ Future Development
 
-Future versions may include improvements and new functionality in areas such as:
+Future versions may include:
 
 * Enhanced dashboards and reporting
-* Improved attendance and meeting management
-* More financial tools
+* Improved attendance management
+* Additional financial tools
 * Notifications
 * Advanced permissions
 * Improved mobile functionality
-* Better analytics and metrics
+* Analytics and metrics
 * Additional parish management features
-* Automation of repetitive administrative tasks
-* Improved deployment and monitoring
+* Automation of administrative tasks
+* Improved monitoring and deployment
 * Additional integrations
 
 The roadmap is intentionally flexible and will evolve with the project.
@@ -430,38 +366,45 @@ The roadmap is intentionally flexible and will evolve with the project.
 
 ## 📌 Current State
 
-**IAJM Version 1** should be understood as the **initial foundation of a larger system**.
+**IAJM Version 1** represents the initial foundation of a larger system.
 
-It already establishes:
+It establishes:
 
-* The core architecture
-* The main applications
-* The central API
-* The database model
-* The main business domains
-* The initial security model
+* Core architecture
+* Web application
+* Mobile application
+* Central API
+* Database model
+* Main business domains
+* Initial security model
 * Development infrastructure
 * Production infrastructure
 
-However, the project is still under active development.
+The project is still under active development.
 
 Some workflows, interfaces, business rules and technical components may change as real-world usage provides additional requirements and feedback.
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributions
 
-This project is currently intended primarily for internal development and parish use.
+At this stage, the project is primarily intended for internal development and parish use.
 
-As the project evolves, contribution guidelines may be introduced for external collaborators.
+Any external contribution, reuse, modification or distribution requires prior authorization from the copyright holder.
 
 ---
 
 ## 📄 License
 
-**Internal Use — IAJM Parish Project**
+This project is **proprietary software**.
 
-All rights reserved.
+Copyright © 2026 Harold Torres Gallo. All rights reserved.
+
+The source code may be publicly visible for reference and development purposes, but **no license is granted** to use, reproduce, modify, distribute, sublicense, publish, sell, or commercially exploit this software without prior written permission from the copyright holder.
+
+Third-party dependencies and components remain subject to their respective licenses.
+
+For permissions or licensing inquiries, please contact the copyright holder.
 
 ---
 
